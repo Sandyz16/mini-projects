@@ -1,0 +1,152 @@
+//countdown timer
+//index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Countdown Timer</h1>
+        <input type="number" id="timeInput" placeholder="Enter time in seconds" min="1">
+        <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="pauseBtn">Pause</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+        <div id="timerDisplay">00:00</div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+//styles.css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 60%;
+    margin-bottom: 20px;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin: 0 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#timerDisplay {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+//script.js
+let timer;
+let timeRemaining;
+let isPaused = false;
+
+const timeInput = document.getElementById('timeInput');
+const timerDisplay = document.getElementById('timerDisplay');
+const startBtn = document.getElementById('startBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+// Function to start the countdown
+startBtn.addEventListener('click', () => {
+    if (!timeInput.value || timeInput.value <= 0) {
+        alert("Please enter a valid time in seconds.");
+        return;
+    }
+    
+    timeRemaining = parseInt(timeInput.value);
+    isPaused = false;
+    updateDisplay(timeRemaining);
+
+    timer = setInterval(() => {
+        if (!isPaused && timeRemaining > 0) {
+            timeRemaining--;
+            updateDisplay(timeRemaining);
+        } else if (timeRemaining === 0) {
+            clearInterval(timer);
+            alert("Time's up!");
+        }
+    }, 1000);
+
+    startBtn.disabled = true;
+    timeInput.disabled = true;
+});
+
+// Function to pause the countdown
+pauseBtn.addEventListener('click', () => {
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? "Resume" : "Pause";
+});
+
+// Function to reset the countdown
+resetBtn.addEventListener('click', () => {
+    clearInterval(timer);
+    timeRemaining = 0;
+    updateDisplay(0);
+    startBtn.disabled = false;
+    timeInput.disabled = false;
+    timeInput.value = '';
+    pauseBtn.textContent = "Pause";
+    isPaused = false;
+});
+
+// Function to update the timer display
+function updateDisplay(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
